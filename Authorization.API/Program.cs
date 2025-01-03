@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection;
 using System.Text;
 using Authorization.Application.Handlers;
 using Authorization.Infrastructure;
@@ -9,6 +10,8 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Shared.Extensions;
 using Shared.Helpers;
 using Shared.Middlewares;
 
@@ -32,6 +35,10 @@ public class Program
             typeof(SignInQueryHandler).Assembly));
         
         //test logger from Shared
+        var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        builder.Services.AddSerilogLogging(assemblyName ?? "Authorization");
+        
+        
         builder.Services.AddSingleton<ILogHelper, LogHelper>();
         builder.Services.AddSingleton<AuthHelper>();
         builder.Services.AddSingleton<IAuthRepository, AuthRepository>();

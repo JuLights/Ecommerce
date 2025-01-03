@@ -19,12 +19,7 @@ public class AuthRepository(IDbConnection connection) : IAuthRepository
 
         if (user == null) throw new UserFriendlyException(ErrorMessages.AuthNotPermitted);
 
-        var roles = (await grid.ReadAsync<Role>()).ToList();
-
-        return user with
-        {
-            Roles = roles
-        };
+        return user;
     }
 
 
@@ -38,12 +33,8 @@ public class AuthRepository(IDbConnection connection) : IAuthRepository
         var user = await grid.ReadSingleOrDefaultAsync<User>();
 
         if (user == null) throw new UserFriendlyException(ErrorMessages.AuthNotPermitted);
-
-        var roles = (await grid.ReadAsync<Role>()).ToList();
-        return user with
-        {
-            Roles = roles
-        };
+        
+        return user;
     }
 
     public async Task SignUpUser(User user)
@@ -56,10 +47,7 @@ public class AuthRepository(IDbConnection connection) : IAuthRepository
             user.LastName,
             user.Email,
             user.PhoneNumber,
-            user.ConfirmPassword,
-            user.RoleId,
-            user.UserGroupId,
-            user.DepartmentId
+            user.ConfirmPassword
         }, commandType: CommandType.StoredProcedure);
     }
 
@@ -74,11 +62,8 @@ public class AuthRepository(IDbConnection connection) : IAuthRepository
             user.LastName,
             user.Email,
             user.PhoneNumber,
-            user.RoleId,
             user.Password,
             user.ConfirmPassword,
-            user.UserGroupId,
-            user.DepartmentId
         }, commandType: CommandType.StoredProcedure);
     }
 

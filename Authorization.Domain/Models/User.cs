@@ -28,16 +28,9 @@ public record User : BaseEntity
     [Required(ErrorMessage = "Confirm password is required.")]
     [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Role is required.")]
-    public int RoleId { get; init; }
+    
     public DateTime CreateDate { get; set; } = DateTime.UtcNow;
     public DateTime? UpdateDate { get; set; }
 
-    public List<Role> Roles { get; init; } = [];
-
-    [Required(ErrorMessage = "UserGroup is required")]
-    public int UserGroupId { get; set; }
-    [Required(ErrorMessage = "Department is required.")]
-    public int DepartmentId { get; init; }
+    public bool IsAdmin { get; set; }
 }

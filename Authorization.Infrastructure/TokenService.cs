@@ -36,7 +36,8 @@ public class TokenService
             new("Name", $"{user.FirstName} {user.LastName}")
         };
 
-        claims.AddRange(user.Roles.Select(role => new Claim("roles", role.Id.ToString())));
+        claims.Add(new Claim("IsAdmin", user.IsAdmin.ToString()));
+        // claims.AddRange(user.Roles.Select(role => new Claim("roles", role.Id.ToString())));
 
         var token = new JwtSecurityToken(
             _issuer,

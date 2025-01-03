@@ -31,16 +31,12 @@ public partial record SignUpDto
     public string ConfirmPassword { get; set; } = string.Empty;
 
     public int RoleId { get; init; }
-    [Required(ErrorMessage = "UserGroup is required")]
-    public int UserGroupId { get; init; }
-    [Required(ErrorMessage = "Department is required.")]
-    public int DepartmentId { get; init; }
 
-    public bool IsValidPassword()
-    {
-        return PasswordRegex().IsMatch(Password);
-    }
-
-    [GeneratedRegex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*\(\)\-_=\+\[\]\{\};:'"",<>\./?\\|`]).+$")]
-    private static partial Regex PasswordRegex();
+    // public bool IsValidPassword()
+    // {
+    //     return PasswordRegex().IsMatch(Password);
+    // }
+    //
+    // [GeneratedRegex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$%\^&\*\(\)\-_=\+\[\]\{\};:'"",<>\./?\\|`]).+$")]
+    // private static partial Regex PasswordRegex();
 }

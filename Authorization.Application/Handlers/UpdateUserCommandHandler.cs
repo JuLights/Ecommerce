@@ -22,10 +22,7 @@ public class UpdateUserCommandHandler(IAuthRepository authRepository,
             FirstName = request.User.FirstName,
             LastName = request.User.LastName,
             Email = request.User.Email,
-            PhoneNumber = request.User.PhoneNumber,
-            RoleId = request.User.RoleId,
-            UserGroupId = request.User.UserGroupId,
-            DepartmentId = request.User.DepartmentId
+            PhoneNumber = request.User.PhoneNumber
         };
 
         var mappedUser = mapper.Map<User>(updatedUser);
