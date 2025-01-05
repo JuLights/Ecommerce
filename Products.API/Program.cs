@@ -1,3 +1,11 @@
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Shared.Helpers;
+
 namespace Products.API;
 
 public class Program
@@ -11,7 +19,72 @@ public class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        
+        //basic services
+        
+        // builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+        //     typeof(GetAllProductsQueryHandler).Assembly));
+
+        builder.Services.AddSingleton<AuthHelper>();
+        var connectionString = builder.Configuration.GetConnectionString("Default");
+        builder.Services.AddSingleton<IDbConnection>(_ => new SqlConnection(connectionString));
+        builder.Services.AddHttpContextAccessor();
+        
+        #region Auth
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+        });
+        
+        var keyString = builder.Configuration["Jwt:Key"] ?? "";
+        var key = Encoding.ASCII.GetBytes(keyString);
+
+        builder.Services.AddAuthentication(x =>
+        {
+            x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(x =>
+        {
+            x.RequireHttpsMetadata = false;
+            x.SaveToken = true;
+            x.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"]
+            };
+        });
+
+        #endregion
+        
+        
+        
+        
+
 
         var app = builder.Build();
 

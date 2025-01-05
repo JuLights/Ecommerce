@@ -23,14 +23,12 @@ public partial record SignUpDto
     public string PhoneNumber { get; init; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required.")]
-    [StringLength(100, MinimumLength = 8, ErrorMessage = "You must use at least 1 uppercase letter and a number.")]
+    [StringLength(100, MinimumLength = 4, ErrorMessage = "You must use at least 1 uppercase letter and a number.")]
     public string Password { get; init; } = string.Empty;
 
     [Required(ErrorMessage = "Confirm password is required.")]
     [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = string.Empty;
-
-    public int RoleId { get; init; }
 
     // public bool IsValidPassword()
     // {
