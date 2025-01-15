@@ -1,9 +1,15 @@
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection;
 using System.Text;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Products.Application.Handlers.Products;
+using Products.Infrastructure.Implementations;
+using Products.Infrastructure.Interfaces;
+using Shared.Extensions;
 using Shared.Helpers;
 
 namespace Products.API;
@@ -21,14 +27,29 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         
         //basic services
+        builder.Services.AddMapster();
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+            typeof(GetAllProductsQueryHandler).Assembly,
+            typeof(GetSingleProductQueryHandler).Assembly,
+            typeof(CreateProductCommandHandler).Assembly,
+            typeof(UpdateProductCommandHandler).Assembly,
+            typeof(DeleteProductCommandHandler).Assembly));
         
-        // builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
-        //     typeof(GetAllProductsQueryHandler).Assembly));
+        
 
-        builder.Services.AddSingleton<AuthHelper>();
+        builder.Services.AddScoped<AuthHelper>();
+        
+        var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        
+        builder.Services.AddSerilogLogging(assemblyName ?? "Products");
+        builder.Services.AddSingleton<ILogHelper, LogHelper>();
+        
         var connectionString = builder.Configuration.GetConnectionString("Default");
-        builder.Services.AddSingleton<IDbConnection>(_ => new SqlConnection(connectionString));
+        builder.Services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
         builder.Services.AddHttpContextAccessor();
+        
+        //Repo services
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
         
         #region Auth
         builder.Services.AddSwaggerGen(options =>

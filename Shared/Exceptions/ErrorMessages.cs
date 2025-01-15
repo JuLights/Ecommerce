@@ -19,4 +19,13 @@ public enum ErrorMessages
     InvalidPassword,
 
     #endregion
+
+    #region Product Errors
+    ProductsDataNotFound,
+    ProductDataNotFound,
+    ProductNotCreated,
+    ProductNotUpdated,
+    ProductNotDeleted,
+    
+    #endregion
 }

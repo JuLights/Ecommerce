@@ -7,15 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\" />
-      <Folder Include="DTO\" />
-      <Folder Include="Handlers\" />
-      <Folder Include="Queries\" />
+      <ProjectReference Include="..\Products.Infrastructure\Products.Infrastructure.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Products.Infrastructure\Products.Infrastructure.csproj" />
-      <ProjectReference Include="..\Shared\Shared.csproj" />
+      <PackageReference Include="Mapster" Version="7.4.0" />
+      <PackageReference Include="MediatR" Version="12.4.1" />
     </ItemGroup>
 
 </Project>
