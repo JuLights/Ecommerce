@@ -9,7 +9,6 @@ using Shared.Helpers;
 namespace Products.API.Controllers;
 
 [Route("api/[controller]")]
-[Authorize]
 [ApiController]
 public class ProductsController(IMediator mediator, ILogHelper logHelper) : ControllerBase
 {
@@ -19,6 +18,16 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
         var result = await mediator.Send(new GetAllProductsQuery(page, amount));
         
         logHelper.LogInfo("GetAllProductsQuery executed successfully");
+        
+        return new JsonResult(result);
+    }
+    
+    [HttpGet("SubCategory/{subCategoryId:int}")]
+    public async Task<IActionResult> GetProductsBySubCategoryId(int subCategoryId)
+    {
+        var result = await mediator.Send(new GetProductsBySubCategoryIdQuery(subCategoryId));
+        
+        logHelper.LogInfo("GetProductsBySubCategoryIdQuery executed successfully");
         
         return new JsonResult(result);
     }
@@ -34,6 +43,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     }
     
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] RequestProductDto requestProductDto)
     {
         var result = await mediator.Send(new CreateProductCommand(requestProductDto));
@@ -44,6 +54,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
     {
         var result = await mediator.Send(new UpdateProductCommand(updateProductDto));
@@ -54,6 +65,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await mediator.Send(new DeleteProductCommand(id));

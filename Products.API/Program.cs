@@ -6,6 +6,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Products.Application.Handlers.Categories;
 using Products.Application.Handlers.Products;
 using Products.Infrastructure.Implementations;
 using Products.Infrastructure.Interfaces;
@@ -33,7 +34,10 @@ public class Program
             typeof(GetSingleProductQueryHandler).Assembly,
             typeof(CreateProductCommandHandler).Assembly,
             typeof(UpdateProductCommandHandler).Assembly,
-            typeof(DeleteProductCommandHandler).Assembly));
+            typeof(DeleteProductCommandHandler).Assembly,
+            typeof(GetAllCategoryQueryHandler).Assembly,
+            typeof(GetProductsBySubCategoryIdQueryHandler).Assembly
+            ));
         
         
 
@@ -50,6 +54,7 @@ public class Program
         
         //Repo services
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
+        builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
         
         #region Auth
         builder.Services.AddSwaggerGen(options =>

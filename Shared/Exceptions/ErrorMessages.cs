@@ -28,4 +28,8 @@ public enum ErrorMessages
     ProductNotDeleted,
     
     #endregion
+    
+    #region Category Errors
+    CategoryDataNotFound,
+    #endregion
 }

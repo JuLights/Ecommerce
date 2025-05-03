@@ -27,6 +27,20 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         return result;
     }
 
+    public async Task<IEnumerable<Product>> GetProductsBySubCategoryId(int subCategoryId)
+    {
+        var products = await connection.QueryAsync<Product>(
+            "SP_GetProductsBySubCategoryId",
+            new
+            {
+                SubCategoryId = subCategoryId
+            },
+            commandType: CommandType.StoredProcedure
+        );
+
+        return products;
+    }
+
     public async Task<Product> GetSingle(int id)
     {
         var result = await connection.QuerySingleOrDefaultAsync<Product>(
@@ -48,11 +62,16 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
     {
         
         var parameters = new DynamicParameters();
+        parameters.Add("SubCategoryId", product.SubCategoryId);
         parameters.Add("Name", product.Name);
         parameters.Add("Description", product.Description);
         parameters.Add("LongDescription", product.LongDescription);
         parameters.Add("ColorId", product.ColorId);
         parameters.Add("Size", product.Size);
+        parameters.Add("Quantity", product.Quantity);
+        parameters.Add("IsDiscounted", product.IsDiscounted);
+        parameters.Add("DiscountPercentage", product.DiscountPercentage);
+        parameters.Add("Price", product.Price);
         //output id
         parameters.Add("ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
         
@@ -77,11 +96,16 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
             new
             {
                 Id = product.Id,
+                SubCategoryId = product.SubCategoryId,
                 Name = product.Name,
                 Description = product.Description,
                 LongDescription = product.LongDescription,
                 ColorId = product.ColorId,
-                Size = product.Size
+                Size = product.Size,
+                Quantity = product.Quantity,
+                IsDiscounted = product.IsDiscounted,
+                DiscountPercentage = product.DiscountPercentage,
+                Price = product.Price
             },
             commandType: CommandType.StoredProcedure
             );
