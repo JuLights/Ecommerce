@@ -1,3 +1,6 @@
+using System.Data;
+using System.Data.SqlClient;
+
 namespace Search.API;
 
 public class Program
@@ -12,6 +15,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        var connectionString = builder.Configuration.GetConnectionString("Default");
+        builder.Services.AddSingleton<IDbConnection>(_ => new SqlConnection(connectionString));
 
         var app = builder.Build();
 
