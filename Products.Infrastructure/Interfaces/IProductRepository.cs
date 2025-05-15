@@ -7,8 +7,8 @@ public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllAsync(int page, int amount);
     Task<IEnumerable<Product>> GetProductsBySubCategoryId(int subCategoryId);
-    Task<Product> GetSingle(int id);
-    Task<int> CreateAsync(Product product);
-    Task<bool> UpdateAsync(Product product);
+    Task<SingleProduct> GetSingle(int id);
+    Task<int> CreateAsync(SingleProduct product);
+    Task<bool> UpdateAsync(SingleProduct product);
     Task<bool> DeleteAsync(int id);
 }

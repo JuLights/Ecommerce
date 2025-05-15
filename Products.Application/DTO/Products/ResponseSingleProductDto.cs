@@ -2,19 +2,15 @@
 
 namespace Products.Application.DTO.Products;
 
-public record UpdateProductDto
+public record ResponseSingleProductDto : BaseDto
 {
-    public int Id { get; set; }
     public int SubCategoryId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string LongDescription { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
-    
-    public IEnumerable<UpdateSingleColorQuantity> ColorQuantities { get; set; } = [];
-    //Quantities
-    // public int OverallQuantity { get; set; } // not needed, calculated in repository or in handler
-    //Prices
+    public IEnumerable<ResponseColorQuantity> ColorQuantities { get; set; } = [];
+    //prices
     public bool IsDiscounted { get; set; }
     public decimal DiscountPercentage { get; set; }
     public decimal Price { get; set; }
@@ -22,8 +18,9 @@ public record UpdateProductDto
     public IEnumerable<byte[]>? Images { get; set; } = [];
 }
 
-public record UpdateSingleColorQuantity
+public record ResponseColorQuantity
 {
     public int Quantity { get; set; }
     public int ColorId { get; set; }
+    public string ColorName { get; set; } = string.Empty;
 }

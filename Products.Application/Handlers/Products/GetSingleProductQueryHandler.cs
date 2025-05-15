@@ -7,13 +7,13 @@ using Products.Infrastructure.Interfaces;
 namespace Products.Application.Handlers.Products;
 
 public class GetSingleProductQueryHandler(IProductRepository repository, IMapper mapper)
-    : IRequestHandler<GetSingleProductQuery, ResponseProductDto>
+    : IRequestHandler<GetSingleProductQuery, ResponseSingleProductDto>
 {
-    public async Task<ResponseProductDto> Handle(GetSingleProductQuery request, CancellationToken cancellationToken)
+    public async Task<ResponseSingleProductDto> Handle(GetSingleProductQuery request, CancellationToken cancellationToken)
     {
         var result = await repository.GetSingle(request.Id);
 
-        var mappedResult = mapper.Map<ResponseProductDto>(result);
+        var mappedResult = mapper.Map<ResponseSingleProductDto>(result);
         
         return mappedResult;
     }

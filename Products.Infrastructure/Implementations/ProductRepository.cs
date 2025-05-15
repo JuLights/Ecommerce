@@ -41,37 +41,58 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         return products;
     }
 
-    public async Task<Product> GetSingle(int id)
+    public async Task<SingleProduct> GetSingle(int id)
     {
-        var result = await connection.QuerySingleOrDefaultAsync<Product>(
+        var parameters = new DynamicParameters();
+        parameters.Add("Id", id);
+
+        using var multi = await connection.QueryMultipleAsync(
             "SP_GetSingleProduct",
-            new
-            {
-                Id = id
-            },
+            parameters,
             commandType: CommandType.StoredProcedure
         );
-        
-        if(result == null)
+
+        var product = await multi.ReadFirstOrDefaultAsync<SingleProduct>();
+        if (product == null)
             throw new UserFriendlyException(ErrorMessages.ProductDataNotFound);
 
-        return result;
+        var colorQuantities = (await multi.ReadAsync<SingleColorQuantity>()).ToList();
+        product.ColorQuantities = colorQuantities;
+
+        return product;
     }
 
-    public async Task<int> CreateAsync(Product product)
+    public async Task<int> CreateAsync(SingleProduct product)
     {
+        int overallQuantity = 0;
+        
+        // Create DataTable for ColorQuantities
+        var colorQuantitiesTable = new DataTable();
+        colorQuantitiesTable.Columns.Add("Quantity", typeof(int));
+        colorQuantitiesTable.Columns.Add("ColorId", typeof(int));
+        colorQuantitiesTable.Columns.Add("ColorName", typeof(string));
         
         var parameters = new DynamicParameters();
         parameters.Add("SubCategoryId", product.SubCategoryId);
         parameters.Add("Name", product.Name);
         parameters.Add("Description", product.Description);
         parameters.Add("LongDescription", product.LongDescription);
-        parameters.Add("ColorId", product.ColorId);
         parameters.Add("Size", product.Size);
-        parameters.Add("Quantity", product.Quantity);
+        
+        foreach (var colorQty in product.ColorQuantities)
+        {
+            overallQuantity += colorQty.Quantity; // for overall quantity
+            
+            colorQuantitiesTable.Rows.Add(colorQty.Quantity, colorQty.ColorId, colorQty.ColorName);
+        }
+        
+        parameters.Add("OverallQuantity", overallQuantity);
         parameters.Add("IsDiscounted", product.IsDiscounted);
         parameters.Add("DiscountPercentage", product.DiscountPercentage);
         parameters.Add("Price", product.Price);
+        
+        // Add the DataTable as a parameter
+        parameters.Add("ColorQuantities", colorQuantitiesTable.AsTableValuedParameter("dbo.ColorQuantityTableType"));
         //output id
         parameters.Add("ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
         
@@ -89,26 +110,44 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         return productId;
     }
 
-    public async Task<bool> UpdateAsync(Product product)
+    public async Task<bool> UpdateAsync(SingleProduct product)
     {
+        int overallQuantity = 0;
+        
+        // Create DataTable for ColorQuantities
+        var colorQuantitiesTable = new DataTable();
+        colorQuantitiesTable.Columns.Add("Quantity", typeof(int));
+        colorQuantitiesTable.Columns.Add("ColorId", typeof(int));
+        colorQuantitiesTable.Columns.Add("ColorName", typeof(string));
+        
+        var parameters = new DynamicParameters();
+        parameters.Add("Id", product.Id);
+        parameters.Add("SubCategoryId", product.SubCategoryId);
+        parameters.Add("Name", product.Name);
+        parameters.Add("Description", product.Description);
+        parameters.Add("LongDescription", product.LongDescription);
+        parameters.Add("Size", product.Size);
+        
+        foreach (var colorQty in product.ColorQuantities)
+        {
+            overallQuantity += colorQty.Quantity; // for overall quantity
+            
+            colorQuantitiesTable.Rows.Add(colorQty.Quantity, colorQty.ColorId, colorQty.ColorName);
+        }
+        
+        parameters.Add("OverallQuantity", overallQuantity);
+        parameters.Add("IsDiscounted", product.IsDiscounted);
+        parameters.Add("DiscountPercentage", product.DiscountPercentage);
+        parameters.Add("Price", product.Price);
+        
+        // Add the DataTable as a parameter
+        parameters.Add("ColorQuantities", colorQuantitiesTable.AsTableValuedParameter("dbo.ColorQuantityTableType"));
+        
+        
         var result = await connection.ExecuteAsync(
             "SP_UpdateProduct",
-            new
-            {
-                Id = product.Id,
-                SubCategoryId = product.SubCategoryId,
-                Name = product.Name,
-                Description = product.Description,
-                LongDescription = product.LongDescription,
-                ColorId = product.ColorId,
-                Size = product.Size,
-                Quantity = product.Quantity,
-                IsDiscounted = product.IsDiscounted,
-                DiscountPercentage = product.DiscountPercentage,
-                Price = product.Price
-            },
-            commandType: CommandType.StoredProcedure
-            );
+            parameters,
+            commandType: CommandType.StoredProcedure);
         
         if (result < 1)
             throw new UserFriendlyException(ErrorMessages.ProductNotUpdated);

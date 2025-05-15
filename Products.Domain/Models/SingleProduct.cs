@@ -1,29 +1,27 @@
-﻿using Shared.DTO;
+﻿using Shared.Models;
 
-namespace Products.Application.DTO.Products;
+namespace Products.Domain.Models;
 
-public record UpdateProductDto
+public record SingleProduct : BaseEntity
 {
-    public int Id { get; set; }
     public int SubCategoryId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string LongDescription { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
-    
-    public IEnumerable<UpdateSingleColorQuantity> ColorQuantities { get; set; } = [];
-    //Quantities
-    // public int OverallQuantity { get; set; } // not needed, calculated in repository or in handler
-    //Prices
+    //quantities
+    public IEnumerable<SingleColorQuantity> ColorQuantities { get; set; } = [];
+    //prices
     public bool IsDiscounted { get; set; }
     public decimal DiscountPercentage { get; set; }
     public decimal Price { get; set; }
     
-    public IEnumerable<byte[]>? Images { get; set; } = [];
+    public IEnumerable<byte[]> Images { get; set; } = [];
 }
 
-public record UpdateSingleColorQuantity
+public record SingleColorQuantity
 {
     public int Quantity { get; set; }
     public int ColorId { get; set; }
+    public string? ColorName { get; set; } = string.Empty;
 }

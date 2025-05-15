@@ -38,8 +38,12 @@ public class Program
             typeof(GetAllCategoryQueryHandler).Assembly,
             typeof(GetProductsBySubCategoryIdQueryHandler).Assembly
             ));
-        
-        
+
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.CompactionPercentage = 0.2;
+            options.ExpirationScanFrequency = TimeSpan.FromMinutes(5);
+        });
 
         builder.Services.AddScoped<AuthHelper>();
         

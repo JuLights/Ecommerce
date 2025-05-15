@@ -11,7 +11,7 @@ public class UpdateProductCommandHandler(IProductRepository repository, IMapper 
 {
     public async Task<bool> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var mappedProduct = mapper.Map<Product>(request.UpdateProductDto);
+        var mappedProduct = mapper.Map<SingleProduct>(request.UpdateProductDto);
         
         var result = await repository.UpdateAsync(mappedProduct);
         

@@ -42,6 +42,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
         return new JsonResult(result);
     }
     
+    //Admin
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> Create([FromBody] RequestProductDto requestProductDto)
