@@ -31,5 +31,7 @@ public enum ErrorMessages
     
     #region Category Errors
     CategoryDataNotFound,
+    CategoryNotCreated,
+    CategoryNotUpdated,
     #endregion
 }
