@@ -12,7 +12,7 @@ namespace Products.API.Controllers;
 [Authorize]
 public class AdminController(IMediator mediator, ILogHelper helper) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("create-category")]
     public async Task<IActionResult> CreateCategory([FromBody] RequestCategoryDto requestCategoryDto)
     {
         var result = await mediator.Send(new CreateCategoryCommand(requestCategoryDto));
@@ -31,6 +31,7 @@ public class AdminController(IMediator mediator, ILogHelper helper) : Controller
         return BadRequest();
     }
     
+    [HttpPut("update-category")]
     public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryDto updateCategoryDto)
     {
         var result = await mediator.Send(new UpdateCategoryCommand(updateCategoryDto));

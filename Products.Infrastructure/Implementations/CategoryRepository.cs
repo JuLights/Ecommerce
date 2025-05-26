@@ -40,7 +40,7 @@ public class CategoryRepository(IDbConnection connection) : ICategoryRepository
         foreach (var subCategory in category.SubCategories)
         {
             dataTable.Rows.Add(
-                subCategory.CategoryId,
+                category.Id,
                 subCategory.Name,
                 subCategory.Description
             );
@@ -75,7 +75,8 @@ public class CategoryRepository(IDbConnection connection) : ICategoryRepository
             foreach (var subCategory in category.SubCategories)
             {
                 dataTable.Rows.Add(
-                    subCategory.CategoryId,
+                    subCategory.Id,
+                    category.Id,
                     subCategory.Name,
                     subCategory.Description
                 );
@@ -86,7 +87,7 @@ public class CategoryRepository(IDbConnection connection) : ICategoryRepository
         parameters.Add("Id", category.Id);
         parameters.Add("Name", category.Name);
         parameters.Add("Description", category.Description);
-        parameters.Add("SubCategories", dataTable.AsTableValuedParameter("dbo.SubCategoryType"));
+        parameters.Add("SubCategories", dataTable.AsTableValuedParameter("dbo.SubCategoryTypeWithId"));
         
         var result = await connection.ExecuteAsync(
             "SP_UpdateCategory",
