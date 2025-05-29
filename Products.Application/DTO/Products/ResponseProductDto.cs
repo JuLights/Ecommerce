@@ -17,6 +17,6 @@ public record ResponseProductDto : BaseDto
     public bool IsDiscounted { get; set; }
     public decimal DiscountPercentage { get; set; }
     public decimal Price { get; set; }
-    
-    public IEnumerable<byte[]> Images { get; set; } = [];
+
+    public IEnumerable<string> ProductImages { get; set; } = [];
 }

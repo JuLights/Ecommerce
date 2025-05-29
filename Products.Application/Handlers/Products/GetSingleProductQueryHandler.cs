@@ -11,9 +11,16 @@ public class GetSingleProductQueryHandler(IProductRepository repository, IMapper
 {
     public async Task<ResponseSingleProductDto> Handle(GetSingleProductQuery request, CancellationToken cancellationToken)
     {
-        var result = await repository.GetSingle(request.Id);
+        var singleProduct = await repository.GetSingle(request.Id);
+        var mappedResult = mapper.Map<ResponseSingleProductDto>(singleProduct);
+        mappedResult.ImageLinks = new List<string>();
+        
+        foreach (var imageLink in singleProduct.ProductImages)
+        {
+            ((List<string>)mappedResult.ImageLinks).Add(imageLink.PublicPath);
+        }
 
-        var mappedResult = mapper.Map<ResponseSingleProductDto>(result);
+        
         
         return mappedResult;
     }

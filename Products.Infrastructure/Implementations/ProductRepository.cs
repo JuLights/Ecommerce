@@ -10,21 +10,35 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
 {
     public async Task<IEnumerable<Product>> GetAllAsync(int page, int amount)
     {
-        var result = await connection.QueryAsync<Product>(
+        await using var multi = await connection.QueryMultipleAsync(
             "SP_GetAllProducts",
             new
             {
                 Page = page,
-                Amount = amount
+                amount = amount
             },
             commandType: CommandType.StoredProcedure
         );
 
-
-        if (!result.Any())
+        var products = (await multi.ReadAsync<Product>()).ToList();
+        var productImages = (await multi.ReadAsync<ProductImage>()).ToList();
+        
+        if (!products.Any())
             throw new UserFriendlyException(ErrorMessages.ProductsDataNotFound);
+        
+        foreach (var productImage in productImages)
+        {
+            foreach (var product in products.Where(product => productImage.ProductId == product.Id))
+            {
+                if (!product.ProductImages.Any())
+                {
+                    product.ProductImages = new List<string>();
+                }
+                ((List<string>)product.ProductImages).Add(productImage.PublicPath);
+            }
+        }
 
-        return result;
+        return products;
     }
 
     public async Task<IEnumerable<Product>> GetProductsBySubCategoryId(int subCategoryId)
@@ -46,7 +60,7 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         var parameters = new DynamicParameters();
         parameters.Add("Id", id);
 
-        using var multi = await connection.QueryMultipleAsync(
+        await using var multi = await connection.QueryMultipleAsync(
             "SP_GetSingleProduct",
             parameters,
             commandType: CommandType.StoredProcedure
@@ -58,7 +72,9 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
 
         var colorQuantities = (await multi.ReadAsync<SingleColorQuantity>()).ToList();
         product.ColorQuantities = colorQuantities;
-
+        var productImages = (await multi.ReadAsync<ProductImage>()).ToList();
+        product.ProductImages = productImages;
+        
         return product;
     }
 
@@ -71,6 +87,19 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         colorQuantitiesTable.Columns.Add("Quantity", typeof(int));
         colorQuantitiesTable.Columns.Add("ColorId", typeof(int));
         colorQuantitiesTable.Columns.Add("ColorName", typeof(string));
+
+        var imagesTable = new DataTable();
+        imagesTable.Columns.Add("Id", typeof(int));
+        imagesTable.Columns.Add("ProductId", typeof(int));
+        imagesTable.Columns.Add("ImageName", typeof(string));
+        imagesTable.Columns.Add("ImageExt", typeof(string));
+        imagesTable.Columns.Add("DiskPath", typeof(string));
+        imagesTable.Columns.Add("PublicPath", typeof(string));
+
+        foreach (var productImage in product.ProductImages)
+        {
+            imagesTable.Rows.Add(0,0,productImage.ImageName, productImage.ImageExt, productImage.DiskPath, productImage.PublicPath);
+        }
         
         var parameters = new DynamicParameters();
         parameters.Add("SubCategoryId", product.SubCategoryId);
@@ -93,6 +122,7 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
         
         // Add the DataTable as a parameter
         parameters.Add("ColorQuantities", colorQuantitiesTable.AsTableValuedParameter("dbo.ColorQuantityTableType"));
+        parameters.Add("ProductImages", imagesTable.AsTableValuedParameter("dbo.ProductImageTableType"));
         //output id
         parameters.Add("ProductId", dbType: DbType.Int32, direction: ParameterDirection.Output);
         

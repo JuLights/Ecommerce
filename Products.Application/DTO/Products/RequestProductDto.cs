@@ -1,4 +1,6 @@
-﻿namespace Products.Application.DTO.Products;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Products.Application.DTO.Products;
 
 public record RequestProductDto
 {
@@ -9,7 +11,6 @@ public record RequestProductDto
     public string Size { get; set; } = string.Empty;
     
     public IEnumerable<RequestSingleColorQuantity> ColorQuantities { get; set; } = [];
-    
     //quanitites
     // public int OverallQuantity { get; set; } // not needed, calculated in repository or in handler
     //prices
@@ -17,7 +18,7 @@ public record RequestProductDto
     public decimal DiscountPercentage { get; set; }
     public decimal Price { get; set; }
     
-    public IEnumerable<byte[]>? Images { get; set; } = [];
+    public IEnumerable<IFormFile>? Images { get; set; } = [];
 }
 
 public record RequestSingleColorQuantity

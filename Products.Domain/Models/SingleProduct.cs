@@ -16,7 +16,7 @@ public record SingleProduct : BaseEntity
     public decimal DiscountPercentage { get; set; }
     public decimal Price { get; set; }
     
-    public IEnumerable<byte[]> Images { get; set; } = [];
+    public IEnumerable<ProductImage> ProductImages { get; set; } = [];
 }
 
 public record SingleColorQuantity

@@ -41,11 +41,46 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
         
         return new JsonResult(result);
     }
+
+    [HttpGet("images/{imageName}")]
+    public async Task<IActionResult> GetImage(string imageName)
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Products", imageName);
+
+        if (!System.IO.File.Exists(filePath))
+        {
+            return NotFound();
+        }
+
+        var fileExtension = Path.GetExtension(imageName).ToLower();
+        var contentType = "application/octet-stream";
+        
+        if (fileExtension is ".jpg" or ".jpeg")
+        {
+            contentType = "image/jpeg";
+        }
+        else if (fileExtension == ".png")
+        {
+            contentType = "image/png";
+        }
+        else if (fileExtension == ".gif")
+        {
+            contentType = "image/gif";
+        }
+        else if (fileExtension == ".bmp")
+        {
+            contentType = "image/bmp";
+        }
+
+        var imageBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+        return File(imageBytes, contentType);
+    }
+    
     
     //Admin
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RequestProductDto requestProductDto)
+    public async Task<IActionResult> Create([FromForm] RequestProductDto requestProductDto)
     {
         var result = await mediator.Send(new CreateProductCommand(requestProductDto));
         

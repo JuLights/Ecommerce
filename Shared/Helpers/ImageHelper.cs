@@ -1,40 +1,53 @@
-﻿namespace Shared.Helpers;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Exceptions;
 
-public class ImageHelper
-{
-    private const string ProductImagesFolder = "ProductImages";
-    
-    public static async Task<IEnumerable<string>> CreateImageAsync(List<byte[]> images, string name)
-    {
-        if (!Directory.Exists(ProductImagesFolder))
-        {
-            Directory.CreateDirectory(ProductImagesFolder);
-        }
-        
-        var savedImagePaths = new List<string>();
-        
-        foreach (var image in images)
-        {
-            var fileName = $"{name}_{Guid.NewGuid()}.jpg";
-            var filePath = Path.Combine(ProductImagesFolder, fileName);
-            
-            await File.WriteAllBytesAsync(filePath, image);
-            savedImagePaths.Add(filePath);
-        }
+namespace Shared.Helpers;
 
-        return savedImagePaths;
-    }
-    
-    public static async Task<IEnumerable<byte[]>> GetImagesAsync(IEnumerable<string> imagePaths)
-    {
-        var images = new List<byte[]>();
-        
-        foreach (var imagePath in imagePaths)
-        {
-            var image = await File.ReadAllBytesAsync(imagePath);
-            images.Add(image);
-        }
-
-        return images;
-    }
-}
+// public static class ImageHelper
+// {
+//     private static readonly string[] AllowedExtensions = [".jpeg", ".png"];
+//     private const long MaxFileSize = 5 * 1024 * 1024; 
+//     public static string UploadFile(IFormFile? file)
+//     {
+//         if (file == null || file.Length == 0)
+//         {
+//             throw new UserFriendlyException(ErrorMessages.ImageNotUploaded);
+//         }
+//
+//         if (file.Length > MaxFileSize)
+//         {
+//             throw new UserFriendlyException(ErrorMessages.ImageSizeIsMoreThan5Mb);
+//         }
+//
+//         var fileExtension = Path.GetExtension(file.FileName).ToLower();
+//
+//         if (Array.IndexOf(AllowedExtensions, fileExtension) < 0)
+//         {
+//             throw new UserFriendlyException(ErrorMessages.WrongImageExtension);
+//         }
+//
+//         var destinationFolder = Environment.GetEnvironmentVariable("IMAGE_DIR");
+//
+//         if (destinationFolder == null || !Directory.Exists(destinationFolder))
+//         {
+//             throw new Exception("Image upload directory not set");
+//         }
+//
+//         Directory.CreateDirectory(destinationFolder);
+//         var fileName = Path.GetFileName(file.FileName);
+//         var destinationFilePath = Path.Combine(destinationFolder, fileName);
+//                 
+//         try
+//         {
+//             using var stream = new FileStream(destinationFilePath, FileMode.Create);
+//             file.CopyTo(stream);
+//         }
+//         catch (Exception ex)
+//         {
+//             throw new Exception($"Error while uploading the file: {ex.Message}");
+//         }
+//                 
+//         return fileName;
+//
+//     }
+// }
