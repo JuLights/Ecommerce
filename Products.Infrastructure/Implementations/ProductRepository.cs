@@ -20,7 +20,7 @@ public class ProductRepository(IDbConnection connection) : IProductRepository
             commandType: CommandType.StoredProcedure
         );
 
-        var products = (await multi.ReadAsync<Product>()).ToList();
+        var products = (await multi.ReadAsync<Product>()).OrderByDescending(x=>x.Id).ToList();
         var productImages = (await multi.ReadAsync<ProductImage>()).ToList();
         
         if (!products.Any())
