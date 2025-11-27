@@ -34,4 +34,9 @@ public enum ErrorMessages
     CategoryNotCreated,
     CategoryNotUpdated,
     #endregion
+    
+    #region Static Data Errors
+    ColorsDataNotFound,
+    SubCategoriesDataNotFound,
+    #endregion
 }

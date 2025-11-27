@@ -1,7 +1,9 @@
 ﻿using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Products.Application.Commands.Products;
+using Products.Application.DTO.Products;
 using Products.Domain.Models;
 using Products.Infrastructure.Interfaces;
 
@@ -19,7 +21,21 @@ public class CreateProductCommandHandler(IProductRepository repository, IMapper 
         // TODO: 2. Save on Disk: get DiskPath
         // TODO: 3. Need to write service to retrieve image from disk, image link from our server
 
+        mappedProduct.ColorQuantities = new List<SingleColorQuantity>();
+        
+        IEnumerable<RequestSingleColorQuantity> colorQuantities =
+            JsonConvert.DeserializeObject<IEnumerable<RequestSingleColorQuantity>>(
+                request.ProductDto.ColorQuantitiesJson) ?? [];
 
+        foreach (var colorQuantity in colorQuantities)
+        {
+            mappedProduct.ColorQuantities.Add(new SingleColorQuantity()
+            {
+                ColorId = colorQuantity.ColorId,
+                Quantity = colorQuantity.Quantity
+            });
+        }
+        
         if (request.ProductDto.Images != null)
         {
             string curDir = Directory.GetCurrentDirectory(); 

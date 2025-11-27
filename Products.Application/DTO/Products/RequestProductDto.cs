@@ -10,7 +10,7 @@ public record RequestProductDto
     public string LongDescription { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
     
-    public IEnumerable<RequestSingleColorQuantity> ColorQuantities { get; set; } = [];
+    public string ColorQuantitiesJson { get; set; } = string.Empty;
     //quanitites
     // public int OverallQuantity { get; set; } // not needed, calculated in repository or in handler
     //prices

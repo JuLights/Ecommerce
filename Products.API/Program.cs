@@ -71,6 +71,7 @@ public class Program
         //Repo services
         builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+        builder.Services.AddScoped<IStaticRepository, StaticRepository>();
         
         #region Auth
         builder.Services.AddSwaggerGen(options =>

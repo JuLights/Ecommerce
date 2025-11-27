@@ -10,7 +10,7 @@ public record SingleProduct : BaseEntity
     public string LongDescription { get; set; } = string.Empty;
     public string Size { get; set; } = string.Empty;
     //quantities
-    public IEnumerable<SingleColorQuantity> ColorQuantities { get; set; } = [];
+    public List<SingleColorQuantity> ColorQuantities { get; set; } = [];
     //prices
     public bool IsDiscounted { get; set; }
     public decimal DiscountPercentage { get; set; }
