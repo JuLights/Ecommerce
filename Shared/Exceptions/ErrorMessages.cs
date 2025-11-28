@@ -12,6 +12,7 @@ public enum ErrorMessages
     AuthNotPermitted,
     AuthTokenInvalid,
     AuthRefreshTokenInvalid,
+    UsersDataNotFound,
     #endregion
     
     #region Password Errors

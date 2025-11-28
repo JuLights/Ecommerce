@@ -54,7 +54,10 @@ public class Program
         
         builder.Services.AddSingleton<ILogHelper, LogHelper>();
         builder.Services.AddSingleton<AuthHelper>();
+        
         builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        
         builder.Services.AddSingleton<TokenService>();
         builder.Services.AddHttpContextAccessor();
         var connectionString = builder.Configuration.GetConnectionString("Default");

@@ -37,6 +37,14 @@ public class TokenService
         };
 
         claims.Add(new Claim("IsAdmin", user.IsAdmin.ToString()));
+        if (user.IsAdmin)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+        }
+        else
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "User"));
+        }
         // claims.AddRange(user.Roles.Select(role => new Claim("roles", role.Id.ToString())));
 
         var token = new JwtSecurityToken(
