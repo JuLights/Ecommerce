@@ -141,7 +141,8 @@ public class Program
         app.UseCors("AllowAll");
 
         app.UseHttpsRedirection();
-
+        
+        app.UseAuthentication();
         app.UseAuthorization();
 
 

@@ -61,7 +61,8 @@ public class TokenService
             ValidateIssuerSigningKey = true,
             ValidIssuer = _issuer,
             ValidAudience = _audience,
-            IssuerSigningKey = _key
+            IssuerSigningKey = _key,
+            ClockSkew = TimeSpan.Zero
         };
 
         var principal = _tokenHandler.ValidateToken(token, validationParameters, out _);
