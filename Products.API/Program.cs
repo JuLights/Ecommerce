@@ -1,7 +1,3 @@
-using System.Data;
-using System.Data.SqlClient;
-using System.Reflection;
-using System.Text;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +8,11 @@ using Products.Infrastructure.Implementations;
 using Products.Infrastructure.Interfaces;
 using Shared.Extensions;
 using Shared.Helpers;
+using Shared.Models;
+using System.Data;
+using System.Data.SqlClient;
+using System.Reflection;
+using System.Text;
 
 namespace Products.API;
 
@@ -58,7 +59,8 @@ public class Program
         });
 
         builder.Services.AddScoped<AuthHelper>();
-        
+        builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
         var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         
         builder.Services.AddSerilogLogging(assemblyName ?? "Products");

@@ -1,3 +1,4 @@
+using Shared.Models;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -15,7 +16,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
+
+        builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
         var connectionString = builder.Configuration.GetConnectionString("Default");
         builder.Services.AddSingleton<IDbConnection>(_ => new SqlConnection(connectionString));
 

@@ -1,7 +1,3 @@
-using System.Data;
-using System.Data.SqlClient;
-using System.Reflection;
-using System.Text;
 using Authorization.Application.Handlers;
 using Authorization.Infrastructure;
 using Authorization.Infrastructure.Implementations;
@@ -14,6 +10,11 @@ using Serilog;
 using Shared.Extensions;
 using Shared.Helpers;
 using Shared.Middlewares;
+using Shared.Models;
+using System.Data;
+using System.Data.SqlClient;
+using System.Reflection;
+using System.Text;
 
 namespace Authorization.API;
 
@@ -50,8 +51,9 @@ public class Program
         //test logger from Shared
         var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         builder.Services.AddSerilogLogging(assemblyName ?? "Authorization");
-        
-        
+
+        builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
         builder.Services.AddSingleton<ILogHelper, LogHelper>();
         builder.Services.AddSingleton<AuthHelper>();
         
