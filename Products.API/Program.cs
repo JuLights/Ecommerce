@@ -6,6 +6,8 @@ using Products.Application.Handlers.Categories;
 using Products.Application.Handlers.Products;
 using Products.Infrastructure.Implementations;
 using Products.Infrastructure.Interfaces;
+using Services.Implementations;
+using Services.Interfaces;
 using Shared.Extensions;
 using Shared.Helpers;
 using Shared.Models;
@@ -65,7 +67,15 @@ public class Program
         
         builder.Services.AddSerilogLogging(assemblyName ?? "Products");
         builder.Services.AddSingleton<ILogHelper, LogHelper>();
-        
+
+        builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+        // Add standard memory cache
+        builder.Services.AddMemoryCache();
+
+        // Register caching service
+        builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
+
         var connectionString = builder.Configuration.GetConnectionString("Default");
         builder.Services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
         builder.Services.AddHttpContextAccessor();

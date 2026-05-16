@@ -47,7 +47,7 @@ public class Program
         builder.Services.AddMapster();
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
             typeof(SignInQueryHandler).Assembly));
-        
+
         //test logger from Shared
         var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         builder.Services.AddSerilogLogging(assemblyName ?? "Authorization");
@@ -56,12 +56,19 @@ public class Program
 
         builder.Services.AddSingleton<ILogHelper, LogHelper>();
         builder.Services.AddSingleton<AuthHelper>();
-        
+
         builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        
+
         builder.Services.AddSingleton<TokenService>();
         builder.Services.AddHttpContextAccessor();
+
+//#if DEBUG
+//        builder.Services.AddDebugServices();
+//#else
+//            builder.Services.AddReleaseServices();
+//#endif
+
         var connectionString = builder.Configuration.GetConnectionString("Default");
         builder.Services.AddSingleton<IDbConnection>(_ => new SqlConnection(connectionString));
 
