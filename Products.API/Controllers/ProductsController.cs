@@ -79,7 +79,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     
     //Admin
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromForm] RequestProductDto requestProductDto)
     {
         var result = await mediator.Send(new CreateProductCommand(requestProductDto));
@@ -90,7 +90,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     }
 
     [HttpPut]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update([FromBody] UpdateProductDto updateProductDto)
     {
         var result = await mediator.Send(new UpdateProductCommand(updateProductDto));
@@ -101,7 +101,7 @@ public class ProductsController(IMediator mediator, ILogHelper logHelper) : Cont
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await mediator.Send(new DeleteProductCommand(id));
